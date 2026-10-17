@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Ippo AdBlocker",
-  "version": "1.0.0",
-  "description": "Blocks 3,500+ ad and tracker domains at the network level, plus cosmetic filtering for leftover ad containers.",
+  "version": "2.0.0",
+  "description": "Blocks 188k+ ad/tracker rules (EasyList, EasyPrivacy, AdGuard Base), YouTube video ads, popups, and hides leftover ad containers.",
   "permissions": ["declarativeNetRequest", "storage", "tabs"],
   "host_permissions": ["<all_urls>"],
   "background": {
@@ -14,14 +14,30 @@
         "id": "ruleset_1",
         "enabled": true,
         "path": "rules/rules_1.json"
+      },
+      {
+        "id": "ruleset_2",
+        "enabled": true,
+        "path": "rules/rules_2.json"
+      },
+      {
+        "id": "ruleset_3",
+        "enabled": true,
+        "path": "rules/rules_3.json"
       }
     ]
   },
+  "web_accessible_resources": [
+    {
+      "resources": ["src/inject.js"],
+      "matches": ["http://*/*", "https://*/*"]
+    }
+  ],
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],
       "js": ["src/content.js"],
-      "css": ["src/cosmetic.css"],
+      "css": ["src/generic-cosmetic.css", "src/cosmetic.css"],
       "run_at": "document_start",
       "all_frames": true
     }
