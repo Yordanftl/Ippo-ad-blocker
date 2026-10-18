@@ -5,6 +5,7 @@
 // 2) Popups: blocks window.open() calls not triggered by a recent user gesture.
 (function () {
   "use strict";
+  if (window.__ippoInjected) return; // ran twice (manifest MAIN world + tag fallback)
   window.__ippoInjected = true;
 
   // ---------- YouTube ad stripping ----------
@@ -101,13 +102,24 @@
   }
 
   // ---------- Popup blocking ----------
-  // Allow window.open only within 1s of a real (trusted) user gesture.
+  // window.open is allowed only when BOTH:
+  //  1. a real (trusted) user gesture happened within the last second, and
+  //  2. that gesture landed on an interactive element (link/button/form control).
+  // Condition 2 kills click-jacking popunders (pirate-streaming sites cover the
+  // page with an invisible overlay, so the "user click" hits a plain <div>).
   let lastGesture = 0;
+  let lastGestureInteractive = false;
   const GESTURE_MS = 1000;
-  for (const evt of ["click", "keydown", "mousedown", "touchstart"]) {
-    window.addEventListener(evt, (e) => {
-      if (e.isTrusted) lastGesture = Date.now();
-    }, { capture: true, passive: true });
+  const INTERACTIVE = "a,button,input,select,textarea,label,summary,[role='button'],[role='link']";
+
+  const onGesture = (e) => {
+    if (!e.isTrusted) return;
+    lastGesture = Date.now();
+    const t = e.target;
+    lastGestureInteractive = !!(t && t.closest && t.closest(INTERACTIVE));
+  };
+  for (const evt of ["click", "mousedown", "keydown", "touchstart"]) {
+    window.addEventListener(evt, onGesture, { capture: true, passive: true });
   }
 
   const FAKE_WINDOW = {
@@ -118,9 +130,9 @@
 
   const origWindowOpen = window.open;
   window.open = function (url, name, features) {
-    const active = (navigator.userActivation && navigator.userActivation.isActive) ||
+    const recent = (navigator.userActivation && navigator.userActivation.isActive) ||
                    (Date.now() - lastGesture < GESTURE_MS);
-    if (!active) {
+    if (!recent || !lastGestureInteractive) {
       console.debug("[Ippo AdBlocker] blocked popup:", url);
       return FAKE_WINDOW;
     }

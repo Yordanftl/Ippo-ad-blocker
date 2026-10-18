@@ -14,9 +14,21 @@ import sys
 
 SOURCES = ["ruleset_101", "ruleset_102", "ruleset_103"]  # EasyList, EasyPrivacy, AdGuard Base
 
+def rule_key(r):
+    c = r.get("condition", {})
+    return (
+        r["action"]["type"],
+        c.get("urlFilter"), c.get("regexFilter"),
+        tuple(sorted(c.get("resourceTypes", []))),
+        tuple(sorted(c.get("excludedResourceTypes", []))),
+        tuple(sorted(c.get("initiatorDomains", []))),
+        tuple(sorted(c.get("requestDomains", []))),
+    )
+
 def main(src_dir: str, out_dir: str) -> None:
     os.makedirs(out_dir, exist_ok=True)
     total = 0
+    seen = set()  # global dedupe — Safari caps at 150k content-blocker rules
     for i, name in enumerate(SOURCES, 1):
         rules = json.load(open(os.path.join(src_dir, name, f"{name}.json")))
         clean = []
@@ -26,6 +38,10 @@ def main(src_dir: str, out_dir: str) -> None:
             r.pop("metadata", None)
             if r["action"]["type"] == "redirect":
                 r["action"] = {"type": "block"}
+            k = rule_key(r)
+            if k in seen:
+                continue
+            seen.add(k)
             clean.append(r)
         for j, r in enumerate(clean, 1):
             r["id"] = j
@@ -33,7 +49,7 @@ def main(src_dir: str, out_dir: str) -> None:
         json.dump(clean, open(dest, "w"))
         total += len(clean)
         print(f"  {dest}: {len(clean)} rules")
-    print(f"  total: {total}")
+    print(f"  total: {total} (deduplicated, fits Safari's 150k limit)")
 
 if __name__ == "__main__":
     main(sys.argv[1], sys.argv[2])

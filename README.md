@@ -2,9 +2,9 @@
 
 A Manifest V3 ad blocker for **Chrome, Brave, Opera, Safari (macOS), and Safari (iOS)**.
 
-- **188,000+ network rules** compiled from EasyList, EasyPrivacy, and AdGuard Base — the same filter lists that power uBlock Origin and AdGuard
+- **132,000+ network rules** compiled from EasyList, EasyPrivacy, and AdGuard Base (globally deduplicated — fits Safari's 150k content-blocker limit)
 - **YouTube video ad blocking** — strips ad placements from YouTube's player data, auto-clicks skip buttons, fast-forwards unskippable ads
-- **Popup blocking** — kills `window.open()` calls that don't follow a real user click
+- **Popup blocking** — kills `window.open()` calls that don't follow a real user click on an actual link or button (defeats click-jacking popunders)
 - **13,800+ cosmetic rules** — removes sponsored posts, banner containers, and ad leftovers the network layer can't reach
 - **Popup UI** with per-tab and all-time blocked counters and an on/off toggle
 - No accounts, no telemetry, no remote code. Everything runs locally.
