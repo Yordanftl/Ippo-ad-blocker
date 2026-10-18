@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Ippo AdBlocker",
-  "version": "2.0.0",
-  "description": "Blocks 188k+ ad/tracker rules (EasyList, EasyPrivacy, AdGuard Base), YouTube video ads, popups, and hides leftover ad containers.",
+  "version": "2.0.1",
+  "description": "Blocks 132k+ ad/tracker rules (EasyList, EasyPrivacy, AdGuard Base), YouTube video ads, popups, and hides leftover ad containers.",
   "permissions": ["declarativeNetRequest", "storage", "tabs"],
   "host_permissions": ["<all_urls>"],
   "background": {
@@ -34,6 +34,13 @@
     }
   ],
   "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["src/inject.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "world": "MAIN"
+    },
     {
       "matches": ["http://*/*", "https://*/*"],
       "js": ["src/content.js"],

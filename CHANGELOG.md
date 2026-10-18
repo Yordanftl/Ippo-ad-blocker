@@ -2,6 +2,35 @@
 
 All notable changes to Ippo AdBlocker.
 
+## [2.0.1] — 2026-10-18
+
+Safari compatibility + popup hardening release.
+
+### Fixed
+
+- **Safari dropped ~40k rules**: Safari compiles DNR rules into its internal
+  content-blocker format with a hard 150,000-rule limit. The three rulesets
+  are now globally deduplicated — 188,528 → **132,612 unique rules** with zero
+  coverage loss (AdGuard Base was ~56k duplicates of EasyList/EasyPrivacy),
+  fitting under Safari's cap on all platforms.
+- **Click-jacking popunders allowed**: sites (pirate streaming etc.) cover the
+  page with an invisible overlay, so the "user gesture" check passed.
+  `window.open` now additionally requires that the gesture landed on an
+  interactive element (`a`, `button`, form control, `[role=button]`).
+  Verified via CDP: no-gesture popup → blocked, click on plain div → blocked,
+  click on real button → allowed.
+- **Injection race**: `inject.js` was loaded via a `<script>` tag that could
+  finish *after* the page's own inline scripts, letting load-time popups and
+  early YouTube ad data through. It is now a manifest-declared
+  `world: "MAIN"` content script at `document_start`, guaranteed to run before
+  any page script (the tag injection remains as a fallback for older Safari).
+
+### Notes
+
+- Safari reminder: content scripts (popup blocking, cosmetics) only run on
+  sites you grant permission to — Safari → Settings → Extensions → Ippo
+  AdBlocker → "Always Allow on Every Website" for full protection.
+
 ## [2.0.0] — 2026-10-17
 
 A ground-up upgrade of the filtering engine. v1 blocked a single small hosts
