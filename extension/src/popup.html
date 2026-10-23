@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 260px;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #1a1b26;
+      color: #e5e7eb;
+      padding: 16px;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .logo {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, #d6336c, #7c3aed);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 16px; color: #fff;
+    }
+    h1 { font-size: 15px; margin: 0; font-weight: 700; }
+    .sub { font-size: 11px; color: #9ca3af; margin: 0; }
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #24253a;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .toggle-row span { font-size: 13px; font-weight: 600; }
+    .switch {
+      position: relative; width: 42px; height: 24px;
+      background: #4b5563; border-radius: 12px; cursor: pointer;
+      transition: background 0.2s;
+      border: none;
+    }
+    .switch.on { background: #d6336c; }
+    .switch::after {
+      content: ""; position: absolute; top: 3px; left: 3px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #fff; transition: transform 0.2s;
+    }
+    .switch.on::after { transform: translateX(18px); }
+    .stats { display: flex; gap: 8px; }
+    .stat {
+      flex: 1;
+      background: #24253a;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+    }
+    .stat .num { font-size: 20px; font-weight: 800; color: #f472b6; }
+    .stat .lbl { font-size: 10px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">I</div>
+    <div>
+      <h1>Ippo AdBlocker</h1>
+      <p class="sub">Network + cosmetic filtering</p>
+    </div>
+  </div>
+  <div class="toggle-row">
+    <span id="stateLabel">Protection on</span>
+    <button class="switch on" id="toggle" aria-label="Toggle ad blocking"></button>
+  </div>
+  <div class="stats">
+    <div class="stat">
+      <div class="num" id="tabCount">0</div>
+      <div class="lbl">This tab</div>
+    </div>
+    <div class="stat">
+      <div class="num" id="totalCount">0</div>
+      <div class="lbl">All time</div>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
